@@ -5,17 +5,8 @@ import PetDetails from "@/components/pet-details";
 import PetList from "@/components/pet-list";
 import Stats from "@/components/stats";
 
-export default async function page() {
-  // fetch pets data
-  const resp = await fetch(
-    "https://bytegrad.com/course-assets/projects/petsoft/api/pets"
-  );
-  if (!resp.ok) {
-    throw new Error("Failed to fetch pets");
-  }
-  const data = await resp.json();
-
-  console.log("pets:",data);
+export default function page() {
+  
 
   return (
     <main>
@@ -31,7 +22,7 @@ export default async function page() {
 
         <div className="md:col-start-1 md:col-span-1 md:row-start-2 md:row-span-full">
           <ContentBlock>
-            <PetList pets={data} />
+            <PetList />
           </ContentBlock>
         </div>
 
