@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Button } from "./ui/button";
 import { usePetContext } from "@/lib/hooks";
 import { Pet } from "@/lib/types";
+import PetButton from "./pet-button";
 
 export default function PetDetails() {
   const { selectedPet } = usePetContext();
@@ -53,9 +54,9 @@ function Topbar({ pet }: PetProps) {
         <h2 className="font-semibold text-3xl leading-7">{pet?.name}</h2>
       </div>
 
-      <div className="space-x-4">
-        <Button className="bg-[#EFF1F2] text-inherit">Edit</Button>
-        <Button>Checkout</Button>
+      <div className="space-x-2">
+        <PetButton actionType="edit">Edit</PetButton>
+        <PetButton actionType="checkout">Checkout</PetButton>
       </div>
     </div>
   );
