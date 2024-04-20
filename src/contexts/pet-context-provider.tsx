@@ -12,6 +12,7 @@ type TPetContext = {
   pets: Pet[];
   selectedPetId: String | null; // id of the selected pet
   handleChangeSelectedPetId: (id: string) => void;
+  selectedPet: Pet | undefined;
 };
 
 // Create a context
@@ -25,14 +26,19 @@ export default function PetContextProvider({
   const [pets, setPets] = useState(data);
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
+  //derived state
+  const selectedPet = pets.find((pet) => pet.id === selectedPetId);
+
+  //event handlers / actions
   const handleChangeSelectedPetId = (id: string) => {
     setSelectedPetId(id);
-  }
-  
+  };
 
   return (
     // Provide the context and the values
-    <PetContext.Provider value={{ pets, selectedPetId, handleChangeSelectedPetId  }}>
+    <PetContext.Provider
+      value={{ pets, selectedPetId, handleChangeSelectedPetId, selectedPet }}
+    >
       {children}
     </PetContext.Provider>
   );
