@@ -41,7 +41,7 @@ type PetProps = {
 
 function Topbar({ pet }: PetProps) {
   return (
-    <div className="flex items-center justify-between py-5 px-8 bg-white border-b border-black/10">
+    <div className="flex items-center justify-between py-5 px-8 bg-white border-b border-light">
       <div className="flex items-center gap-4">
         <Image
           src={pet?.imageUrl}
@@ -83,7 +83,7 @@ function OtherInfo({ pet }: PetProps) {
 
 function PetNote({ pet }: PetProps) {
   return (
-    <section className="bg-white px-7 py-5 rounded-md mx-8 mb-5 flex-1 border border-black/10">
+    <section className="bg-white px-7 py-5 rounded-md mx-8 mb-5 flex-1 border border-light">
       {pet?.notes}
     </section>
   );

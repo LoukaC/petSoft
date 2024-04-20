@@ -7,7 +7,7 @@ export default function PetList() {
   const { pets, handleChangeSelectedPetId, selectedPetId } = usePetContext();
 
   return (
-    <ul className="bg-white border-b border-black/10">
+    <ul className="bg-white border-b border-light">
       {
         // map over pets
         pets.map((pet) => (
