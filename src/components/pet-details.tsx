@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Button } from "./ui/button";
 import { usePetContext } from "@/lib/hooks";
 import { Pet } from "@/lib/types";
 import PetButton from "./pet-button";
@@ -41,6 +40,8 @@ type PetProps = {
 };
 
 function Topbar({ pet }: PetProps) {
+  const { handleDeletePet } = usePetContext();
+
   return (
     <div className="flex items-center justify-between py-5 px-8 bg-white border-b border-light">
       <div className="flex items-center gap-4">
@@ -56,7 +57,12 @@ function Topbar({ pet }: PetProps) {
 
       <div className="space-x-2">
         <PetButton actionType="edit">Edit</PetButton>
-        <PetButton actionType="checkout">Checkout</PetButton>
+        <PetButton
+          actionType="checkout"
+          onClick={() => handleDeletePet(pet.id)}
+        >
+          Checkout
+        </PetButton>
       </div>
     </div>
   );
