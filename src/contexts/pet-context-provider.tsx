@@ -1,7 +1,7 @@
 "use client";
 
 import { Pet } from "@/lib/types";
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
 
 type PetContextProviderProps = {
   children: React.ReactNode;

@@ -6,8 +6,6 @@ import PetList from "@/components/pet-list";
 import Stats from "@/components/stats";
 
 export default function page() {
-  
-
   return (
     <main>
       <div className="flex justify-between items-center py-8 text-white">
