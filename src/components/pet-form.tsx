@@ -29,9 +29,10 @@ export default function PetForm({ actionType, onSubmitForm }: PetFormProps) {
       notes: formData.get("notes") as string,
     };
 
-  
     // action depending the actionType
-    actionType === "add" ? handleAddPet(pet) : handleEditPet(selectedPet!.id, pet)
+    actionType === "add"
+      ? handleAddPet(pet)
+      : handleEditPet(selectedPet!.id, pet);
 
     onSubmitForm();
   };
