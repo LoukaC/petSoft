@@ -15,7 +15,7 @@ type TPetContext = {
   petsNumber: number;
   handleChangeSelectedPetId: (id: string) => void;
   handleDeletePet: (id: string) => void;
-  handleAddPet: (pet: Pet) => void;
+  handleAddPet: (newpet: Omit<Pet, "id">) => void; // omit the id, id is not given by the user when adding a pet
 };
 
 // Create a context
@@ -43,8 +43,11 @@ export default function PetContextProvider({
     setSelectedPetId(null); // reset the selected pet
   };
   //add a pet
-  const handleAddPet = (newPet: Pet) => {
-    setPets((prev) => [...prev, newPet]);
+  const handleAddPet = (newPet: Omit<Pet, "id">) => {
+    setPets((prev) => [...prev, {
+      ...newPet,
+      id: Date.now().toString() // add id to newPet added by the user
+    }]);
   };
 
   return (
