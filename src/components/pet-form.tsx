@@ -9,9 +9,10 @@ import { Pet } from "@/lib/types";
 
 type PetFormProps = {
   actionType: "add" | "edit";
+  onSubmitForm: () => void;
 };
 
-export default function PetForm({ actionType }: PetFormProps) {
+export default function PetForm({ actionType, onSubmitForm }: PetFormProps) {
   const { handleAddPet } = usePetContext();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -29,6 +30,7 @@ export default function PetForm({ actionType }: PetFormProps) {
     };
 
     handleAddPet(petToAdd)
+    onSubmitForm()
   };
 
   return (
