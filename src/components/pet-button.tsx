@@ -15,6 +15,7 @@ import { useState } from "react";
 type PetButtonProps = {
   children?: React.ReactNode;
   actionType: "add" | "edit" | "checkout";
+  disabled?: boolean;
   className?: string;
   onClick?: () => void;
 };
@@ -23,6 +24,7 @@ export default function PetButton({
   children,
   actionType,
   className,
+  disabled,
   onClick,
 }: PetButtonProps) {
   // state pour controller the opening of the Dialog
@@ -30,7 +32,7 @@ export default function PetButton({
 
   if (actionType === "checkout") {
     return (
-      <Button variant="secondary" onClick={onClick}>
+      <Button variant="secondary" onClick={onClick} disabled={disabled} >
         {children}
       </Button>
     );
