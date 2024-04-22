@@ -16,10 +16,14 @@ type PetFormProps = {
 export default function PetForm({ actionType, onSubmitForm }: PetFormProps) {
   const { selectedPet } = usePetContext();
 
- 
-
   return (
-    <form action={addPet} className="flex flex-col">
+    <form
+      action={async (formData) => {
+        await addPet(formData);
+        onSubmitForm();
+      }}
+      className="flex flex-col"
+    >
       <div className="space-y-3">
         <div className="space-y-1">
           <Label htmlFor="name">Name</Label>
