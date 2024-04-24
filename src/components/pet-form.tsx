@@ -26,6 +26,13 @@ export default function PetForm({ actionType, onSubmitForm }: PetFormProps) {
     formState: { errors },
   } = useForm<TPetFrom>({
     resolver: zodResolver(petFormSchema), // link zod validation to react hook form
+    defaultValues: {
+      name: selectedPet?.name,
+      ownerName: selectedPet?.ownerName,
+      imageUrl: selectedPet?.imageUrl,
+      age: selectedPet?.age,
+      notes: selectedPet?.notes,
+    },
   });
 
   return (
@@ -39,7 +46,6 @@ export default function PetForm({ actionType, onSubmitForm }: PetFormProps) {
         //get data for formData with react hook form
         const petData = getValues();
         petData.imageUrl = petData.imageUrl || DEFAULT_PET_IMAGE; // set default image if imageUrl is empty
-
 
         if (actionType === "add") {
           await handleAddPet(petData);
