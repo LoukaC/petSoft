@@ -11,6 +11,7 @@ import {
 } from "./ui/dialog";
 import PetForm from "./pet-form";
 import { useState } from "react";
+import { flushSync } from "react-dom";
 
 type PetButtonProps = {
   children?: React.ReactNode;
@@ -32,7 +33,7 @@ export default function PetButton({
 
   if (actionType === "checkout") {
     return (
-      <Button variant="secondary" onClick={onClick} disabled={disabled} >
+      <Button variant="secondary" onClick={onClick} disabled={disabled}>
         {children}
       </Button>
     );
@@ -61,7 +62,11 @@ export default function PetButton({
 
         <PetForm
           actionType={actionType}
-          onSubmitForm={() => setIsOpen(false)}
+          onSubmitForm={() => {
+            flushSync(() => { // force the Dialog to close before updating the other state (optimistic update)
+              setIsOpen(false);
+            });
+          }}
         />
       </DialogContent>
     </Dialog>

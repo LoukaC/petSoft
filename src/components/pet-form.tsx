@@ -14,26 +14,29 @@ type PetFormProps = {
 };
 
 export default function PetForm({ actionType, onSubmitForm }: PetFormProps) {
-  const { selectedPet } = usePetContext();
-  
+  const { selectedPet, handleAddPet, handleEditPet } = usePetContext();
 
   return (
     <form
       action={async (formData) => {
+
+        onSubmitForm();// close the modal before adding to database because we use useOptimistic hook to update the UI instantly. React uptades states synchronously, so we need to force the Dialog to close before updating the other state (optimistic update) by using flushSync.
+
+        //create shape for formData
+        const petData = {
+          name: formData.get("name") as string,
+          ownerName: formData.get("ownerName") as string,
+          imageUrl: formData.get("imageUrl") as string || "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+          age: Number(formData.get("age")),
+          notes: formData.get("notes") as string,
+        };
+
         if (actionType === "add") {
-          const error = await addPet(formData);
-          if (error) {
-            toast.warning(error.message);
-            return;
-          }
+          await handleAddPet(petData);
         } else if (actionType === "edit") {
-          const error = await editPet(selectedPet!.id, formData);
-          if (error) {
-            toast.warning(error.message);
-            return;
-          }
+          await handleEditPet(selectedPet!.id, petData);
         }
-        onSubmitForm();
+      
       }}
       className="flex flex-col"
     >

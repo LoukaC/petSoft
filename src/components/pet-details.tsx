@@ -43,7 +43,7 @@ type PetProps = {
 
 function Topbar({ pet }: PetProps) {
   const { handleDeletePet } = usePetContext();
-  const [isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition(); // to use pending outside a form
 
   return (
     <div className="flex items-center justify-between py-5 px-8 bg-white border-b border-light">
@@ -55,7 +55,7 @@ function Topbar({ pet }: PetProps) {
           height={75}
           className="w-[75px] h-[75px] rounded-full object-cover"
         />
-        <h2 className="font-semibold text-3xl leading-7">{pet?.name}</h2>
+        <h2 className="font-semibold text-3xl leading-7">{pet.name}</h2>
       </div>
 
       <div className="space-x-2">
@@ -64,9 +64,7 @@ function Topbar({ pet }: PetProps) {
           actionType="checkout"
           disabled={isPending}
           onClick={async () => {
-            startTransition(async () => {
-              await deletePet(pet.id);
-            });
+            await handleDeletePet(pet.id)
           }}
         >
           Checkout
