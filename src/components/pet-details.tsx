@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import { usePetContext } from "@/lib/hooks";
-import { Pet } from "@/lib/types";
 import PetButton from "./pet-button";
-import { deletePet } from "@/actions/actions";
-import { startTransition, useTransition } from "react";
+//import { useTransition } from "react";
+import { Pet } from "@prisma/client";
 
 export default function PetDetails() {
   const { selectedPet } = usePetContext();
@@ -43,7 +42,7 @@ type PetProps = {
 
 function Topbar({ pet }: PetProps) {
   const { handleDeletePet } = usePetContext();
-  const [isPending, startTransition] = useTransition(); // to use pending outside a form
+  //const [isPending, startTransition] = useTransition(); // to use pending outside a form
 
   return (
     <div className="flex items-center justify-between py-5 px-8 bg-white border-b border-light">
@@ -62,7 +61,7 @@ function Topbar({ pet }: PetProps) {
         <PetButton actionType="edit">Edit</PetButton>
         <PetButton
           actionType="checkout"
-          disabled={isPending}
+          // disabled={isPending}
           onClick={async () => {
             await handleDeletePet(pet.id)
           }}
