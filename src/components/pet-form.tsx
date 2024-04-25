@@ -26,13 +26,16 @@ export default function PetForm({ actionType, onSubmitForm }: PetFormProps) {
     formState: { errors },
   } = useForm<TPetFrom>({
     resolver: zodResolver(petFormSchema), // link zod validation to react hook form
-    defaultValues: {
-      name: selectedPet?.name,
-      ownerName: selectedPet?.ownerName,
-      imageUrl: selectedPet?.imageUrl,
-      age: selectedPet?.age,
-      notes: selectedPet?.notes,
-    },
+    defaultValues:
+      actionType === "edit"
+        ? {
+            name: selectedPet?.name,
+            ownerName: selectedPet?.ownerName,
+            imageUrl: selectedPet?.imageUrl,
+            age: selectedPet?.age,
+            notes: selectedPet?.notes,
+          }
+        : undefined,
   });
 
   return (
