@@ -58,10 +58,17 @@ const config = {
         return true;
       }
 
-      if (!isTryingToAccessApp) {
-        // if user is not trying to access /app (landing, login signup pages)
+      if (isLoggedIn && !isTryingToAccessApp) {
+        // if user is logged in and not trying to access /app
+        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      }
+
+      if (!isLoggedIn && !isTryingToAccessApp) {
+        // if user is not logged in and not trying to access /app
         return true;
       }
+
+      return false;
     },
   },
 } satisfies NextAuthConfig;
