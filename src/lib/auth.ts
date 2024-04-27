@@ -3,6 +3,7 @@ import credentials from "next-auth/providers/credentials";
 import prisma from "./db";
 import bcrypt from "bcryptjs";
 import { getUserByEmail } from "./server-utils";
+import { authSchema } from "./validation";
 
 const config = {
   pages: {
@@ -17,7 +18,15 @@ const config = {
     credentials({
       async authorize(credentials) {
         // run on login
-        const { email, password } = credentials;
+
+        // validate the object formDataObject with zod validation
+        const validatedFormDataObject = authSchema.safeParse(credentials);
+        if (!validatedFormDataObject.success) {
+          return null;
+        }
+
+        // extract values
+        const { email, password } = validatedFormDataObject.data;
 
         // get user from database by email
         const user = await getUserByEmail(email);
