@@ -7,14 +7,13 @@ import SearchContextProvider from "@/contexts/search-context-provider";
 import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { checkAuth } from "@/lib/server-utils";
 
 export default async function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  // checkin authentification
+  const session = await checkAuth();
 
   // geting pets data from prsima for the connected user
   const pets = await prisma.pet.findMany({

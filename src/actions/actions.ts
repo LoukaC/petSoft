@@ -7,6 +7,7 @@ import { petFormSchema, petIdSchenma } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
+import { checkAuth } from "@/lib/server-utils";
 
 // --- user actions  -----
 
@@ -44,10 +45,7 @@ export async function addPet(pet: unknown) {
   await sleep(1000);
 
   // check if user is logged in, authentification
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await checkAuth();
 
   // validate the pet data in the server, because we can't trust the client/api (type unknown) with zod
   const validatedPet = petFormSchema.safeParse(pet);
@@ -83,10 +81,7 @@ export async function editPet(petId: unknown, newPetData: unknown) {
   await sleep(1000);
 
   // check authentification
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await checkAuth();
 
   // validation with zod
   const validatedPetId = petIdSchenma.safeParse(petId);
@@ -138,10 +133,7 @@ export async function deletePet(petId: unknown) {
   await sleep(1000);
 
   // check if user is logged in (authentication)
-  const session = await auth();
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await checkAuth();
 
   // validate the pet id with zod
   const validatedPetId = petIdSchenma.safeParse(petId);
