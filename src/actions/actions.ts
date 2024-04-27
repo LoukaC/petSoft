@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, signOut } from "@/lib/auth";
+import { auth, signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { sleep } from "@/lib/utils";
 import { petFormSchema, petIdSchenma } from "@/lib/validation";
@@ -43,18 +43,30 @@ export async function logOut() {
 export async function addPet(pet: unknown) {
   await sleep(1000);
 
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   // validate the pet data in the server, because we can't trust the client/api (type unknown)
   const validatedPet = petFormSchema.safeParse(pet);
   if (!validatedPet.success) {
     return {
-      message: "Invalid pet data",
+      message: "invalid pet data",
     };
   }
 
   try {
     // add a pet to database
     await prisma.pet.create({
-      data: validatedPet.data,
+      data: {
+        ...validatedPet.data,
+        user: {
+          connect: {
+            id: session.user.id,
+          },
+        },
+      },
     });
   } catch (error) {
     return {
