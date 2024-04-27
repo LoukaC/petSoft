@@ -6,11 +6,14 @@ import { sleep } from "@/lib/utils";
 import { petFormSchema, petIdSchenma } from "@/lib/validation";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
+import { redirect } from "next/navigation";
 
 // --- user actions  -----
 
 export async function logIn(formData: FormData) {
   await signIn("credentials", formData);
+
+  redirect("/app/dashboard");
 }
 
 export async function signUp(formData: FormData) {

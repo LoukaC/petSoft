@@ -70,6 +70,18 @@ const config = {
 
       return false;
     },
+    jwt: ({ token, user }) => {
+      if (user) {
+        // only on login
+        token.userId = user.id;
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
+      session.user.id = token.userId;
+
+      return session;
+    },
   },
 } satisfies NextAuthConfig;
 
