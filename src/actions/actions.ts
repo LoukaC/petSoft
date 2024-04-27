@@ -43,13 +43,13 @@ export async function logOut() {
 export async function addPet(pet: unknown) {
   await sleep(1000);
 
-  // check if user is logged in
+  // check if user is logged in, authentification
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
   }
 
-  // validate the pet data in the server, because we can't trust the client/api (type unknown)
+  // validate the pet data in the server, because we can't trust the client/api (type unknown) with zod
   const validatedPet = petFormSchema.safeParse(pet);
   if (!validatedPet.success) {
     return {
@@ -57,8 +57,8 @@ export async function addPet(pet: unknown) {
     };
   }
 
+  //database mutation
   try {
-    // add a pet to database
     await prisma.pet.create({
       data: {
         ...validatedPet.data,
@@ -82,14 +82,43 @@ export async function addPet(pet: unknown) {
 export async function editPet(petId: unknown, newPetData: unknown) {
   await sleep(1000);
 
+  // check authentification
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  // validation with zod
   const validatedPetId = petIdSchenma.safeParse(petId);
   const validatedPet = petFormSchema.safeParse(newPetData);
+
   if (!validatedPetId.success || !validatedPet.success) {
     return {
       message: "Invalid pet data",
     };
   }
 
+  // authorization
+  const pet = await prisma.pet.findUnique({
+    where: {
+      id: validatedPetId.data,
+    },
+    select: {
+      userId: true,
+    },
+  });
+  if (!pet) {
+    return {
+      message: "Pet not found",
+    };
+  }
+  if (pet.userId !== session.user.id) {
+    return {
+      message: "Not authorized",
+    };
+  }
+
+  // database mutation
   try {
     await prisma.pet.update({
       where: { id: validatedPetId.data },
@@ -114,7 +143,7 @@ export async function deletePet(petId: unknown) {
     redirect("/login");
   }
 
-  // validate the pet id
+  // validate the pet id with zod
   const validatedPetId = petIdSchenma.safeParse(petId);
   if (!validatedPetId.success) {
     return {
@@ -137,7 +166,7 @@ export async function deletePet(petId: unknown) {
       message: "Pet not found",
     };
   }
-  if(pet.userId !== session.user.id) {
+  if (pet.userId !== session.user.id) {
     return {
       message: "Not authorized",
     };
