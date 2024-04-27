@@ -4,23 +4,15 @@ import BackgroundPattern from "@/components/backgound-pattern";
 import { Toaster } from "@/components/ui/sonner";
 import PetContextProvider from "@/contexts/pet-context-provider";
 import SearchContextProvider from "@/contexts/search-context-provider";
-import prisma from "@/lib/db";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { checkAuth } from "@/lib/server-utils";
+import { checkAuth, getPetsByUserId } from "@/lib/server-utils";
 
 export default async function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // checkin authentification
   const session = await checkAuth();
-
   // geting pets data from prsima for the connected user
-  const pets = await prisma.pet.findMany({
-    where: {
-      userId: session.user.id,
-    },
-  });
+  const pets = await getPetsByUserId(session.user.id);
 
   return (
     <>
