@@ -78,7 +78,9 @@ const config = {
       return token;
     },
     session: async ({ session, token }) => {
-      session.user.id = token.userId;
+      if (session.user) {
+        session.user.id = token.userId;
+      }
 
       return session;
     },

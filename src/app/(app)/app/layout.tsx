@@ -11,16 +11,15 @@ import { redirect } from "next/navigation";
 export default async function Layout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  
-  const session = await auth()
-  if(!session?.user){
-    redirect("/login")
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
   }
-  
+
   // geting pets data from prsima for the connected user
   const pets = await prisma.pet.findMany({
     where: {
-      userId: session.user.id
+      userId: session.user.id,
     },
   });
 
