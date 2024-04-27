@@ -43,6 +43,7 @@ export async function logOut() {
 export async function addPet(pet: unknown) {
   await sleep(1000);
 
+  // check if user is logged in
   const session = await auth();
   if (!session?.user) {
     redirect("/login");
@@ -107,6 +108,13 @@ export async function editPet(petId: unknown, newPetData: unknown) {
 export async function deletePet(petId: unknown) {
   await sleep(1000);
 
+  // check if user is logged in (authentication)
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  // validate the pet id
   const validatedPetId = petIdSchenma.safeParse(petId);
   if (!validatedPetId.success) {
     return {
@@ -114,9 +122,33 @@ export async function deletePet(petId: unknown) {
     };
   }
 
+  // authorization check (user can only delete their own pets)
+  const pet = await prisma.pet.findUnique({
+    where: {
+      id: validatedPetId.data,
+    },
+    select: {
+      // only get the userId from the database
+      userId: true,
+    },
+  });
+  if (!pet) {
+    return {
+      message: "Pet not found",
+    };
+  }
+  if(pet.userId !== session.user.id) {
+    return {
+      message: "Not authorized",
+    };
+  }
+
+  // database mutation
   try {
     await prisma.pet.delete({
-      where: { id: validatedPetId.data },
+      where: {
+        id: validatedPetId.data,
+      },
     });
   } catch (error) {
     return {
