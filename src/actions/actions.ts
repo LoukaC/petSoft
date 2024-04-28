@@ -8,22 +8,55 @@ import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
 import { checkAuth, getPetById } from "@/lib/server-utils";
+import { Prisma } from "@prisma/client";
+import { AuthError } from "next-auth";
 
 // --- user actions  -----
 
-export async function logIn(formData: unknown) {
+export async function logIn(prevState: unknown, formData: unknown) {
+  // prevState is working with useFormState, prevState can be the errors form the server
+
+  await sleep(1000);
+
   if (!(formData instanceof FormData)) {
     return {
       message: "Invalid form data",
     };
   }
 
-  await signIn("credentials", formData);
+  try {
+    // try to sign in the user with the credentials
+    await signIn("credentials", formData);
+  } catch (error) {
+    // handle error if email or password is incorrect
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin": {
+          return {
+            message: "Invalid credentials",
+          };
+        }
+        default: {
+          return {
+            message: "Failed to log in",
+          };
+        }
+      }
+    }
+
+    return {
+      message: "Failed to log in",
+    };
+  }
 
   redirect("/app/dashboard");
 }
 
-export async function signUp(formData: unknown) {
+export async function signUp(prevState: unknown, formData: unknown) {
+  // prevState is working with useFormState, prevState can be the errors form the server
+
+  await sleep(1000);
+
   //check if formData is FormData type
   if (!(formData instanceof FormData)) {
     return {
@@ -33,7 +66,7 @@ export async function signUp(formData: unknown) {
 
   // convert formData to object
   const formDataEntries = Object.fromEntries(formData.entries());
-  
+
   // validate the form data with zod
   const validatedFormData = authSchema.safeParse(formDataEntries);
   if (!validatedFormData.success) {
@@ -44,12 +77,28 @@ export async function signUp(formData: unknown) {
 
   const { email, password } = validatedFormData.data;
   const hashedPassword = await bcrypt.hash(password, 10);
-  await prisma.user.create({
-    data: {
-      email,
-      hashedPassword,
-    },
-  });
+
+  try {
+    await prisma.user.create({
+      data: {
+        email,
+        hashedPassword,
+      },
+    });
+  } catch (error) {
+    // handle error if email already exists
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        return {
+          message: "Email already exists",
+        };
+      }
+    }
+
+    return {
+      message: "Failed to sign up",
+    };
+  }
 
   // log in the user after sign up and generate a session with token
   await signIn("credentials", formData);
