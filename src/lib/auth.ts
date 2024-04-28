@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import credentials from "next-auth/providers/credentials";
-import prisma from "./db";
 import bcrypt from "bcryptjs";
 import { getUserByEmail } from "./server-utils";
 import { authSchema } from "./validation";
