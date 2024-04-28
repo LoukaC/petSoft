@@ -20,7 +20,7 @@ export async function logIn(prevState: unknown, formData: unknown) {
 
   if (!(formData instanceof FormData)) {
     return {
-      message: "Invalid form data",
+      message: "Invalid form data.",
     };
   }
 
@@ -33,23 +33,20 @@ export async function logIn(prevState: unknown, formData: unknown) {
       switch (error.type) {
         case "CredentialsSignin": {
           return {
-            message: "Invalid credentials",
+            message: "Invalid credentials.",
           };
         }
         default: {
           return {
-            message: "Failed to log in",
+            message: "Error. Failed to log in.",
           };
         }
       }
     }
 
-    return {
-      message: "Failed to log in",
-    };
+    throw error; // next.js redirects throws error, so need to rethrow it
   }
-
-  redirect("/app/dashboard");
+  redirect("/app/dashboard"); // not mandatory beacause next.js redirect in the try{}
 }
 
 export async function signUp(prevState: unknown, formData: unknown) {
