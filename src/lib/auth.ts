@@ -60,7 +60,11 @@ const config = {
         return false;
       }
 
-      if (isLoggedIn && isTryingToAccessApp) {
+      if (isLoggedIn && isTryingToAccessApp && !auth?.user.hasAccess) {
+        // if user is logged in and trying to access /app
+        return Response.redirect(new URL("/payment", request.nextUrl));
+      }
+      if (isLoggedIn && isTryingToAccessApp && auth?.user.hasAccess) {
         // if user is logged in and trying to access /app
         return true;
       }
@@ -68,11 +72,14 @@ const config = {
       if (isLoggedIn && !isTryingToAccessApp) {
         // if user is logged in and not trying to access /app
 
-        if (request.nextUrl.pathname.includes("/login" || "/signup")) {
+        if (
+          request.nextUrl.pathname.includes("/login" || "/signup") &&
+          !auth?.user.hasAccess
+        ) {
           return Response.redirect(new URL("/payment", request.nextUrl));
         }
 
-        return true
+        return true;
       }
 
       if (!isLoggedIn && !isTryingToAccessApp) {
@@ -84,14 +91,18 @@ const config = {
     },
     jwt: ({ token, user }) => {
       if (user) {
+        // type of token and user in next-auth.d.ts
         // only on login
         token.userId = user.id;
+        token.hasAccess = user.hasAccess;
       }
       return token;
     },
     session: async ({ session, token }) => {
       if (session.user) {
+        // type of session in next-auth.d.ts
         session.user.id = token.userId;
+        session.user.hasAccess = token.hasAccess;
       }
 
       return session;
