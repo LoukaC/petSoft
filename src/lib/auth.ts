@@ -67,7 +67,12 @@ const config = {
 
       if (isLoggedIn && !isTryingToAccessApp) {
         // if user is logged in and not trying to access /app
-        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+
+        if (request.nextUrl.pathname.includes("/login" || "/signup")) {
+          return Response.redirect(new URL("/payment", request.nextUrl));
+        }
+
+        return true
       }
 
       if (!isLoggedIn && !isTryingToAccessApp) {

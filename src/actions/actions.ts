@@ -10,6 +10,10 @@ import { redirect } from "next/navigation";
 import { checkAuth, getPetById } from "@/lib/server-utils";
 import { Prisma } from "@prisma/client";
 import { AuthError } from "next-auth";
+import email from "next-auth/providers/email";
+import line from "next-auth/providers/line";
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // --- user actions  -----
 
@@ -234,4 +238,27 @@ export async function deletePet(petId: unknown) {
   }
   // rerender the /app/layout to get the latest data from the database
   revalidatePath("/app", "layout");
+}
+
+// --- payment actions  -----
+
+export async function createCheckoutSession() {
+  // authentification check
+  const session = await checkAuth();
+
+  const checkoutSession = await stripe.checkout.sessions.create({
+    customer_email: session.user.email,
+    line_items: [
+      {
+        price: "price_1PAbW7Ru9UfvXDGsenPvbz6S",
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${process.env.CANONICAL_URL}/payment?success=true`,
+    cancel_url: `${process.env.CANONICAL_URL}/payment?cancelled=true`,
+  });
+
+  // redirect user
+  redirect(checkoutSession.url);
 }
