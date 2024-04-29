@@ -98,7 +98,7 @@ const config = {
         // type of token and user in next-auth.d.ts
         // only on login
         token.userId = user.id;
-        token.email = user.email;
+        token.email = user.email!;
         token.hasAccess = user.hasAccess;
       }
 
