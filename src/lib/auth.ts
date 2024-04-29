@@ -69,13 +69,17 @@ const config = {
         return true;
       }
 
-      if (isLoggedIn && !isTryingToAccessApp) {
+      if (
+        isLoggedIn &&
+        request.nextUrl.pathname.includes("/login" || "/signup")
+      ) {
+        return Response.redirect(new URL("/app/dashboard", request.nextUrl));
+      }
+
+      if (isLoggedIn && !isTryingToAccessApp && !auth?.user.hasAccess) {
         // if user is logged in and not trying to access /app
 
-        if (
-          request.nextUrl.pathname.includes("/login" || "/signup") &&
-          !auth?.user.hasAccess
-        ) {
+        if (request.nextUrl.pathname.includes("/login" || "/signup")) {
           return Response.redirect(new URL("/payment", request.nextUrl));
         }
 
