@@ -1,13 +1,5 @@
 import { User } from "next-auth";
 
-declare module "@auth/core/jwt" {
-  interface JWT {
-    // token type
-    userId: string;
-    hasAccess: boolean;
-  }
-}
-
 declare module "next-auth" {
   interface User {
     // user type
@@ -20,5 +12,14 @@ declare module "next-auth" {
     user: User & {
       id: string;
     };
+  }
+}
+
+declare module "@auth/core/jwt" {
+  interface JWT {
+    // token type
+    userId: string;
+    hasAccess: boolean;
+    email: string;
   }
 }
