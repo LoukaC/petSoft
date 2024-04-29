@@ -12,13 +12,13 @@ declare module "next-auth" {
   interface User {
     // user type
     hasAccess: boolean;
+    email: string;
   }
 
   interface Session {
     // session type
     user: User & {
       id: string;
-      hasAccess: boolean;
     };
   }
 }

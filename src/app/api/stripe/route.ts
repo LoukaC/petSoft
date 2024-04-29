@@ -3,6 +3,8 @@ import prisma from "@/lib/db";
 export async function POST(request: Request) {
   const data = await request.json();
 
+  console.log(data.data.object.customer_email);
+
   // verify webhook comes from stripe
 
   //fullfill the payment, update hasAccess

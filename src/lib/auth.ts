@@ -89,21 +89,30 @@ const config = {
 
       return false;
     },
-    jwt: ({ token, user }) => {
+    jwt: async ({ token, user, trigger }) => {
       if (user) {
         // type of token and user in next-auth.d.ts
         // only on login
         token.userId = user.id;
+        token.email = user.email;
         token.hasAccess = user.hasAccess;
       }
+
+      if (trigger === "update") {
+        //(update session with hasAccess: true)
+        // on every request
+        const userFromDb = await getUserByEmail(token.email);
+        if (userFromDb) {
+          token.hasAccess = userFromDb.hasAccess;
+        }
+      }
+
       return token;
     },
     session: async ({ session, token }) => {
-      if (session.user) {
-        // type of session in next-auth.d.ts
-        session.user.id = token.userId;
-        session.user.hasAccess = token.hasAccess;
-      }
+      // type of session in next-auth.d.ts
+      session.user.id = token.userId;
+      session.user.hasAccess = token.hasAccess;
 
       return session;
     },
