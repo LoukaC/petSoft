@@ -1,10 +1,7 @@
-import NextAuth, { NextAuthConfig } from "next-auth";
-import credentials from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
+import { NextAuthConfig } from "next-auth";
 import { getUserByEmail } from "./server-utils";
-import { authSchema } from "./validation";
 
-const config = {
+export const nextAuthConfig = {
   pages: {
     signIn: "/login",
   },
@@ -12,42 +9,6 @@ const config = {
   //     maxAge: 30 * 24 * 60 * 60, // duration of session in seconds (30 days)
   //     strategy: "jwt", // session management strategy jwt or database
   // },
-  providers: [
-    // email and password provider
-    credentials({
-      async authorize(credentials) {
-        // run on login
-
-        // validate the object formDataObject with zod validation
-        const validatedFormDataObject = authSchema.safeParse(credentials);
-        if (!validatedFormDataObject.success) {
-          return null;
-        }
-
-        // extract values
-        const { email, password } = validatedFormDataObject.data;
-
-        // get user from database by email
-        const user = await getUserByEmail(email);
-
-        if (!user) {
-          console.log("no user found");
-          return null;
-        }
-
-        const passwordMatched = await bcrypt.compare(
-          password,
-          user.hashedPassword
-        );
-        if (!passwordMatched) {
-          console.log("invvalids credentials");
-          return null;
-        }
-
-        return user;
-      },
-    }),
-  ],
   callbacks: {
     authorized: async ({ auth, request }) => {
       // run on every request with middleware
@@ -126,11 +87,5 @@ const config = {
       return session;
     },
   },
+  providers: [],
 } satisfies NextAuthConfig;
-
-export const {
-  auth,
-  signIn,
-  signOut,
-  handlers: { GET, POST },
-} = NextAuth(config);
